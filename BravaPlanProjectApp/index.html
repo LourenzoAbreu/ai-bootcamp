@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BravaPlan — Civil Engineering PM</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-icon">BP</div>
+      <div class="logo-text">
+        <span class="logo-name">BravaPlan</span>
+        <span class="logo-sub">Civil Engineering</span>
+      </div>
+    </div>
+    <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">✕</button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item active" data-view="dashboard" onclick="navigate('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" data-view="calendar" onclick="navigate('calendar')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Calendar
+    </a>
+    <a class="nav-item" data-view="list" onclick="navigate('list')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      Task List
+    </a>
+    <a class="nav-item" data-view="team" onclick="navigate('team')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Team
+    </a>
+  </nav>
+
+  <div class="sidebar-section-label">PROJECTS</div>
+  <div class="sidebar-projects" id="sidebarProjects"></div>
+</aside>
+
+<!-- ══════════════════════════════════════════════════════ HAMBURGER -->
+<button class="hamburger" id="hamburger" aria-label="Open sidebar">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- ════════════════════════════════════════════════════════ MAIN AREA -->
+<main class="main" id="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+    <div class="topbar-right">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search tasks…" autocomplete="off" />
+        <div class="search-dropdown" id="searchDropdown"></div>
+      </div>
+      <button class="btn-primary" id="newTaskBtn">+ New Task</button>
+    </div>
+  </header>
+
+  <!-- VIEW CONTAINERS -->
+  <div class="view-container">
+
+    <!-- ─────────────────── DASHBOARD VIEW -->
+    <section class="view" id="view-dashboard">
+      <div class="stat-cards" id="statCards"></div>
+      <div class="dashboard-grid">
+        <div class="dashboard-card projects-card">
+          <div class="card-header">
+            <h3>Project Progress</h3>
+          </div>
+          <div id="projectProgress"></div>
+        </div>
+        <div class="dashboard-card workload-card">
+          <div class="card-header">
+            <h3>Team Workload</h3>
+          </div>
+          <div id="teamWorkload"></div>
+        </div>
+      </div>
+      <div class="dashboard-card upcoming-card">
+        <div class="card-header">
+          <h3>Upcoming Tasks</h3>
+          <a class="card-link" onclick="navigate('list')">View all →</a>
+        </div>
+        <div id="upcomingTasks"></div>
+      </div>
+    </section>
+
+    <!-- ─────────────────── CALENDAR VIEW -->
+    <section class="view hidden" id="view-calendar">
+      <div class="calendar-nav">
+        <button class="btn-ghost" id="calPrev">&#8592; Prev</button>
+        <h2 id="calMonthLabel"></h2>
+        <button class="btn-ghost" id="calNext">Next &#8594;</button>
+      </div>
+      <div class="calendar-grid" id="calGrid"></div>
+    </section>
+
+    <!-- ─────────────────── LIST VIEW -->
+    <section class="view hidden" id="view-list">
+      <div class="list-toolbar">
+        <div class="status-tabs" id="statusTabs">
+          <button class="tab active" data-status="all">All</button>
+          <button class="tab" data-status="todo">To Do</button>
+          <button class="tab" data-status="inprogress">In Progress</button>
+          <button class="tab" data-status="inreview">In Review</button>
+          <button class="tab" data-status="done">Done</button>
+        </div>
+        <div class="list-filters">
+          <select id="filterPriority" class="filter-select">
+            <option value="">All Priorities</option>
+            <option value="critical">Critical</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+          <select id="filterProject" class="filter-select">
+            <option value="">All Projects</option>
+          </select>
+          <select id="filterAssignee" class="filter-select">
+            <option value="">All Assignees</option>
+          </select>
+          <select id="filterSort" class="filter-select">
+            <option value="dueDate">Sort: Due Date</option>
+            <option value="priority">Sort: Priority</option>
+            <option value="title">Sort: Title</option>
+            <option value="createdAt">Sort: Created</option>
+          </select>
+          <div class="view-toggle">
+            <button class="toggle-btn active" id="btnList" title="List View">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </button>
+            <button class="toggle-btn" id="btnBoard" title="Board View">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="5" height="15" rx="1"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="listContent"></div>
+    </section>
+
+    <!-- ─────────────────── TEAM VIEW -->
+    <section class="view hidden" id="view-team">
+      <div id="teamHeader"></div>
+      <div class="dept-filter" id="deptFilter"></div>
+      <div class="team-grid" id="teamGrid"></div>
+    </section>
+
+  </div><!-- /view-container -->
+</main>
+
+<!-- ══════════════════════════════════════════════════ DETAIL PANEL -->
+<div class="panel-overlay" id="panelOverlay"></div>
+<aside class="detail-panel" id="detailPanel">
+  <button class="panel-close" id="panelClose">✕</button>
+  <div class="panel-body" id="panelBody"></div>
+</aside>
+
+<!-- ══════════════════════════════════════════════════ TASK MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="taskModal">
+    <div class="modal-header">
+      <h2 id="modalTitle">New Task</h2>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <form id="taskForm" class="modal-form" autocomplete="off">
+      <input type="hidden" id="editId" />
+
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Title <span class="required">*</span></label>
+          <input type="text" id="fTitle" class="form-input" placeholder="Task title" required />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Description</label>
+          <textarea id="fDesc" class="form-input" rows="3" placeholder="Describe the task…"></textarea>
+        </div>
+      </div>
+
+      <div class="form-row two-col">
+        <div class="form-group">
+          <label>Project <span class="required">*</span></label>
+          <select id="fProject" class="form-input" required></select>
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select id="fPriority" class="form-input">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row two-col">
+        <div class="form-group">
+          <label>Status</label>
+          <select id="fStatus" class="form-input">
+            <option value="todo">To Do</option>
+            <option value="inprogress">In Progress</option>
+            <option value="inreview">In Review</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Scheduled Date <span class="required">*</span></label>
+          <input type="date" id="fDate" class="form-input" required />
+        </div>
+      </div>
+
+      <div class="form-row two-col">
+        <div class="form-group">
+          <label>Time</label>
+          <input type="time" id="fTime" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label>Due Date <span class="required">*</span></label>
+          <input type="date" id="fDueDate" class="form-input" required />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Assigned To</label>
+          <div class="assignee-chips" id="assigneeChips"></div>
+          <div class="assignee-search-wrap">
+            <input type="text" id="assigneeSearch" class="form-input" placeholder="Search employees…" autocomplete="off" />
+            <div class="assignee-dropdown" id="assigneeDropdown"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Tags</label>
+          <input type="text" id="fTags" class="form-input" placeholder="Comma-separated tags" />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" id="cancelModal">Cancel</button>
+        <button type="submit" class="btn-primary" id="saveTaskBtn">Save Task</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ MEMBER MODAL -->
+<div class="modal-overlay" id="memberModalOverlay">
+  <div class="modal" id="memberModal">
+    <div class="modal-header">
+      <h2>Add Team Member</h2>
+      <button class="modal-close" id="memberModalClose">✕</button>
+    </div>
+    <form id="memberForm" class="modal-form" autocomplete="off">
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Full Name <span class="required">*</span></label>
+          <input type="text" id="mName" class="form-input" placeholder="e.g., John Smith" required maxlength="80" />
+        </div>
+      </div>
+      <div class="form-row two-col">
+        <div class="form-group">
+          <label>Role / Title <span class="required">*</span></label>
+          <input type="text" id="mRole" class="form-input" placeholder="e.g., Civil Engineer" required maxlength="80" />
+        </div>
+        <div class="form-group">
+          <label>Department <span class="required">*</span></label>
+          <select id="mDept" class="form-input" required>
+            <option value="">Select department…</option>
+            <option>Management</option>
+            <option>Engineering</option>
+            <option>Field</option>
+            <option>Design</option>
+            <option>Safety</option>
+            <option>Quality</option>
+            <option>Finance</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Avatar Color</label>
+          <div class="color-preset-row" id="memberColorPresets"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" id="cancelMemberModal">Cancel</button>
+        <button type="submit" class="btn-primary">Add Member</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ══════════════════════════════════════════════════ SCRIPTS -->
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

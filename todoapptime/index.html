@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Scheduler</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Add Task Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-title">Add Task</h2>
+        <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+      </div>
+      <form id="task-form" onsubmit="saveTask(event)">
+        <div class="form-group">
+          <label for="task-title">Title <span class="required">*</span></label>
+          <input type="text" id="task-title" placeholder="What needs to be done?" maxlength="120" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="task-date">Date <span class="required">*</span></label>
+            <input type="date" id="task-date" required>
+          </div>
+          <div class="form-group">
+            <label for="task-time">Time <span class="required">*</span></label>
+            <input type="time" id="task-time" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="task-desc">Description</label>
+          <textarea id="task-desc" placeholder="Optional notes..." rows="3" maxlength="500"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="task-color">Color Tag</label>
+          <div class="color-picker" id="color-picker">
+            <button type="button" class="color-swatch active" data-color="#4f46e5" style="background:#4f46e5"></button>
+            <button type="button" class="color-swatch" data-color="#0891b2" style="background:#0891b2"></button>
+            <button type="button" class="color-swatch" data-color="#059669" style="background:#059669"></button>
+            <button type="button" class="color-swatch" data-color="#d97706" style="background:#d97706"></button>
+            <button type="button" class="color-swatch" data-color="#dc2626" style="background:#dc2626"></button>
+            <button type="button" class="color-swatch" data-color="#7c3aed" style="background:#7c3aed"></button>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="modal-submit">Add Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Task Detail Modal -->
+  <div class="modal-overlay" id="detail-overlay">
+    <div class="modal modal-detail">
+      <div class="modal-header">
+        <h2 id="detail-title"></h2>
+        <button class="modal-close" onclick="closeDetail()">&#x2715;</button>
+      </div>
+      <div id="detail-body"></div>
+      <div class="form-actions">
+        <button class="btn-danger" onclick="deleteTaskFromDetail()">Delete</button>
+        <button class="btn-secondary" onclick="editTaskFromDetail()">Edit</button>
+        <button class="btn-primary" onclick="toggleDoneFromDetail()">Mark Complete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Shell -->
+  <div class="app">
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo">&#128197; Task Scheduler</div>
+      </div>
+      <div class="header-right">
+        <div class="view-toggle">
+          <button class="view-btn active" id="btn-calendar" onclick="setView('calendar')">Calendar</button>
+          <button class="view-btn" id="btn-list" onclick="setView('list')">List</button>
+        </div>
+        <button class="btn-primary add-btn" onclick="openAddModal()">+ Add Task</button>
+      </div>
+    </header>
+
+    <!-- CALENDAR VIEW -->
+    <main id="view-calendar" class="view active">
+      <div class="calendar-nav">
+        <button class="nav-btn" onclick="changeMonth(-1)">&#8249;</button>
+        <h2 id="calendar-heading"></h2>
+        <button class="nav-btn" onclick="changeMonth(1)">&#8250;</button>
+        <button class="today-btn" onclick="goToToday()">Today</button>
+      </div>
+      <div class="calendar-grid" id="calendar-grid">
+        <div class="cal-day-header">Sun</div>
+        <div class="cal-day-header">Mon</div>
+        <div class="cal-day-header">Tue</div>
+        <div class="cal-day-header">Wed</div>
+        <div class="cal-day-header">Thu</div>
+        <div class="cal-day-header">Fri</div>
+        <div class="cal-day-header">Sat</div>
+      </div>
+    </main>
+
+    <!-- LIST VIEW -->
+    <main id="view-list" class="view">
+      <div class="list-toolbar">
+        <div class="filter-group">
+          <button class="filter-btn active" onclick="setListFilter('all', this)">All</button>
+          <button class="filter-btn" onclick="setListFilter('upcoming', this)">Upcoming</button>
+          <button class="filter-btn" onclick="setListFilter('today', this)">Today</button>
+          <button class="filter-btn" onclick="setListFilter('done', this)">Done</button>
+        </div>
+        <div class="sort-group">
+          <label>Sort:</label>
+          <select id="sort-select" onchange="renderList()">
+            <option value="datetime">Date &amp; Time</option>
+            <option value="title">Title</option>
+          </select>
+        </div>
+      </div>
+      <div id="task-list"></div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
